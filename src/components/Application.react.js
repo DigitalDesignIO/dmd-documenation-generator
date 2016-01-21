@@ -4,11 +4,21 @@ var _ = require('lodash');
 var async = require('async');
 var React = require('react');
 
-var endsWith = require('../utils/string').endsWith;
-
 var Header = require('./Header.react');
 var Navigation = require('./Navigation.react');
 var Collection = require('./Collection.react');
+
+var endsWith = require('../utils/string').endsWith;
+var startsWith = require('../utils/string').startsWith;
+var extension = require('../utils/string').extension;
+
+var typesMap = [
+  {type: 'TITLE', fileName: 'title', extensions: []},
+  {type: 'TEXT', fileName: 'text', extensions: []},
+  {type: 'CAPTION', extensions: ['txt']},
+  {type: 'IMAGE', extensions: ['jpg', 'jpeg', 'gif', 'png', 'svg']},
+  {type: 'P5', extensions: ['js']},
+];
 
 
 var Application = React.createClass({
@@ -31,8 +41,8 @@ var Application = React.createClass({
         },
       ],
       function(err, structure, content) {
-        console.log(structure);
-        console.log("loaded pageItems count:", content.length);
+        console.log('structure:', structure);
+        console.log('loaded pageItems count:', content.length);
         if (that.isMounted()) {
           var pages = _.filter(content, _.matches({fileName: 'title.txt'}));
           that.setState({
@@ -59,6 +69,7 @@ var Application = React.createClass({
   },
 
   loadContent: function(structure, done) {
+    var that = this;
     // create flat structure to hold all dynamic pageItems
     var allPageItems = [];
     var pageNames = _.keys(structure.pages);
@@ -69,7 +80,9 @@ var Application = React.createClass({
           pageName: pageName,
           subPageIndex: index,
           fileName: fileName,
-          content: null
+          type: that.typeFromFileName(fileName),
+          content: null,
+          path: null
         });
       });
     });
@@ -77,6 +90,7 @@ var Application = React.createClass({
     var reqests = _.map(allPageItems, function(pageItem){
       var path = './content/' + pageItem.pageName +'/'+ pageItem.fileName;
       var shouldLoadContent = endsWith(pageItem.fileName, '.txt');
+      pageItem.path = path;
       return function(cb){
         if (shouldLoadContent) {
           $.get(path)
@@ -99,11 +113,24 @@ var Application = React.createClass({
     });
   },
 
+  typeFromFileName: function(fileName) {
+    if (startsWith(fileName.toLowerCase(),'title')) return 'TITLE';
+    if (startsWith(fileName.toLowerCase(),'text')) return 'TEXT';
+
+    var ext = extension(fileName).toLowerCase();
+    for (var i = 0; i < typesMap.length; i++) {
+      var index = _.findIndex(typesMap[i].extensions, function(e) { return e === ext; });
+      if (index >= 0) return typesMap[i].type;
+    };
+    return null;
+  },
+
   setCurrentPage: function(page) {    
     this.setState({
       currentPage: page,
       currentPageContent: _.filter(this.state.content, _.matches({pageName: page.pageName}))
     });
+    console.log('currentPage:', this.state.currentPageContent);
   },
 
   setDocumentTitle: function(title) {

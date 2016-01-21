@@ -4,7 +4,7 @@ var _ = require('lodash');
 var React = require('react');
 
 
-var PageItemText = React.createClass({
+var PageItemCaption = React.createClass({
   getDefaultProps: function () {
     return {
       content: ""
@@ -25,11 +25,11 @@ var PageItemText = React.createClass({
 
   render: function () {
     return (
-      <div className="col-sm-6 middle-col col-sm-offset-3">
+      <div className="col-sm-3 caption">
         {this.createParagraphs()}
       </div>
     );
   } 
 });
 
-module.exports = PageItemText;
+module.exports = PageItemCaption;
