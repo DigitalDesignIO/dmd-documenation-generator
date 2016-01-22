@@ -12,14 +12,15 @@ var endsWith = require('../utils/string').endsWith;
 var startsWith = require('../utils/string').startsWith;
 var extension = require('../utils/string').extension;
 
+
 var typesMap = [
   {type: 'TITLE', fileName: 'title', extensions: []},
   {type: 'TEXT', fileName: 'text', extensions: []},
   {type: 'CAPTION', extensions: ['txt']},
   {type: 'IMAGE', extensions: ['jpg', 'jpeg', 'gif', 'png', 'svg']},
   {type: 'P5', extensions: ['js']},
+  {type: 'VIDEO', extensions: ['mp4']},
 ];
-
 
 var Application = React.createClass({
   getInitialState: function () {
@@ -41,8 +42,6 @@ var Application = React.createClass({
         },
       ],
       function(err, structure, content) {
-        console.log('structure:', structure);
-        console.log('loaded pageItems count:', content.length);
         if (that.isMounted()) {
           var pages = _.filter(content, _.matches({fileName: 'title.txt'}));
           that.setState({
@@ -52,6 +51,10 @@ var Application = React.createClass({
           });
           that.setCurrentPage(pages[0]);
           that.setDocumentTitle(structure.course+" - "+structure.student);
+
+          // console.log('structure:', structure);
+          console.log('loaded pages count:', pages.length);
+          console.log('loaded pageItems count:', content.length);
         }
       }
     );
@@ -89,7 +92,7 @@ var Application = React.createClass({
     // load content of all pageItems
     var reqests = _.map(allPageItems, function(pageItem){
       var path = './content/' + pageItem.pageName +'/'+ pageItem.fileName;
-      var shouldLoadContent = endsWith(pageItem.fileName, '.txt');
+      var shouldLoadContent = (pageItem.type !== 'IMAGE' || pageItem.type !== 'VIDEO');
       pageItem.path = path;
       return function(cb){
         if (shouldLoadContent) {
@@ -130,7 +133,7 @@ var Application = React.createClass({
       currentPage: page,
       currentPageContent: _.filter(this.state.content, _.matches({pageName: page.pageName}))
     });
-    console.log('currentPage:', this.state.currentPageContent);
+    // console.log('currentPage:', this.state.currentPageContent);
   },
 
   setDocumentTitle: function(title) {

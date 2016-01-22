@@ -118,7 +118,7 @@ a:hover {
   }
 
   .doc-wrapper .doc-autor {
-    font-size: 28px;
+    font-size: 25px;
   }
 }
 
@@ -128,13 +128,19 @@ a:hover {
   font-size: 15px;
   font-family: 'circular-book', sans-serif;
   font-weight: bold;
-  /*margin-bottom: 15px;*/
+  margin-bottom: 40px;
   color: #112;
+}
+
+.left-col .content-block div {
+  cursor: pointer;
 }
 
 .left-col .content-block .chapter-start:not(:first-child) {
   margin-top: 20px;
 }
+
+/* LEFT MIDDLE */
 
 .middle-col p {
   font-family: 'circular-book';
@@ -145,6 +151,7 @@ a:hover {
 
 .middle-col img {
   margin-bottom: 25px;
+  background-color: white;
 }
 
 .caption {

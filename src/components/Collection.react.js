@@ -7,6 +7,7 @@ var PageItemText = require('./PageItemText.react');
 var PageItemCaption = require('./PageItemCaption.react');
 var PageItemImage = require('./PageItemImage.react');
 var PageItemP5 = require('./PageItemP5.react');
+var PageItemVideo = require('./PageItemVideo.react');
 
 
 var Collection = React.createClass({
@@ -19,7 +20,7 @@ var Collection = React.createClass({
   createPageItems: function() {
     var items = this.props.pageItems.map(
       function(item, index) {
-        console.log(item.type);
+        // console.log(item.type);
         switch(item.type) {
           case 'TEXT':
             return (<PageItemText key={_.uniqueId()} content={item.content}/>);
@@ -31,7 +32,10 @@ var Collection = React.createClass({
             return (<PageItemImage key={_.uniqueId()} src={item.path}/>);
             break;
           case 'P5':
-            return (<PageItemP5 key={_.uniqueId()} src={item.path}/>);
+            return (<PageItemP5 key={_.uniqueId()} content={item.content}/>);
+            break;
+          case 'VIDEO':
+            return (<PageItemVideo key={_.uniqueId()} src={item.path}/>);
             break;
         }
         return null;

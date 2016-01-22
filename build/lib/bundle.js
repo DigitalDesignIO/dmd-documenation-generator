@@ -44601,11 +44601,15 @@ var _ = require('lodash');
 var async = require('async');
 var React = require('react');
 
-var endsWith = require('../utils/string').endsWith;
-
 var Header = require('./Header.react');
 var Navigation = require('./Navigation.react');
 var Collection = require('./Collection.react');
+
+var endsWith = require('../utils/string').endsWith;
+var startsWith = require('../utils/string').startsWith;
+var extension = require('../utils/string').extension;
+
+var typesMap = [{ type: 'TITLE', fileName: 'title', extensions: [] }, { type: 'TEXT', fileName: 'text', extensions: [] }, { type: 'CAPTION', extensions: ['txt'] }, { type: 'IMAGE', extensions: ['jpg', 'jpeg', 'gif', 'png', 'svg'] }, { type: 'P5', extensions: ['js'] }, { type: 'VIDEO', extensions: ['mp4'] }];
 
 var Application = React.createClass({
   displayName: 'Application',
@@ -44627,8 +44631,6 @@ var Application = React.createClass({
     }, function (structure, doneTwo) {
       that.loadContent(structure, doneTwo);
     }], function (err, structure, content) {
-      console.log(structure);
-      console.log("loaded pageItems count:", content.length);
       if (that.isMounted()) {
         var pages = _.filter(content, _.matches({ fileName: 'title.txt' }));
         that.setState({
@@ -44638,6 +44640,10 @@ var Application = React.createClass({
         });
         that.setCurrentPage(pages[0]);
         that.setDocumentTitle(structure.course + " - " + structure.student);
+
+        // console.log('structure:', structure);
+        console.log('loaded pages count:', pages.length);
+        console.log('loaded pageItems count:', content.length);
       }
     });
   },
@@ -44652,6 +44658,7 @@ var Application = React.createClass({
   },
 
   loadContent: function loadContent(structure, done) {
+    var that = this;
     // create flat structure to hold all dynamic pageItems
     var allPageItems = [];
     var pageNames = _.keys(structure.pages);
@@ -44662,14 +44669,17 @@ var Application = React.createClass({
           pageName: pageName,
           subPageIndex: index,
           fileName: fileName,
-          content: null
+          type: that.typeFromFileName(fileName),
+          content: null,
+          path: null
         });
       });
     });
     // load content of all pageItems
     var reqests = _.map(allPageItems, function (pageItem) {
       var path = './content/' + pageItem.pageName + '/' + pageItem.fileName;
-      var shouldLoadContent = endsWith(pageItem.fileName, '.txt');
+      var shouldLoadContent = pageItem.type !== 'IMAGE' || pageItem.type !== 'VIDEO';
+      pageItem.path = path;
       return function (cb) {
         if (shouldLoadContent) {
           $.get(path).done(function (data) {
@@ -44689,11 +44699,26 @@ var Application = React.createClass({
     });
   },
 
+  typeFromFileName: function typeFromFileName(fileName) {
+    if (startsWith(fileName.toLowerCase(), 'title')) return 'TITLE';
+    if (startsWith(fileName.toLowerCase(), 'text')) return 'TEXT';
+
+    var ext = extension(fileName).toLowerCase();
+    for (var i = 0; i < typesMap.length; i++) {
+      var index = _.findIndex(typesMap[i].extensions, function (e) {
+        return e === ext;
+      });
+      if (index >= 0) return typesMap[i].type;
+    };
+    return null;
+  },
+
   setCurrentPage: function setCurrentPage(page) {
     this.setState({
       currentPage: page,
       currentPageContent: _.filter(this.state.content, _.matches({ pageName: page.pageName }))
     });
+    // console.log('currentPage:', this.state.currentPageContent);
   },
 
   setDocumentTitle: function setDocumentTitle(title) {
@@ -44725,12 +44750,17 @@ var Application = React.createClass({
 
 module.exports = Application;
 
-},{"../utils/string":170,"./Collection.react":166,"./Header.react":167,"./Navigation.react":168,"async":1,"lodash":5,"react":163}],166:[function(require,module,exports){
+},{"../utils/string":174,"./Collection.react":166,"./Header.react":167,"./Navigation.react":168,"async":1,"lodash":5,"react":163}],166:[function(require,module,exports){
 'use strict';
 
+var _ = require('lodash');
 var React = require('react');
 
 var PageItemText = require('./PageItemText.react');
+var PageItemCaption = require('./PageItemCaption.react');
+var PageItemImage = require('./PageItemImage.react');
+var PageItemP5 = require('./PageItemP5.react');
+var PageItemVideo = require('./PageItemVideo.react');
 
 var Collection = React.createClass({
   displayName: 'Collection',
@@ -44743,8 +44773,25 @@ var Collection = React.createClass({
 
   createPageItems: function createPageItems() {
     var items = this.props.pageItems.map(function (item, index) {
-      console.log(index);
-      return React.createElement(PageItemText, { content: item.content });
+      // console.log(item.type);
+      switch (item.type) {
+        case 'TEXT':
+          return React.createElement(PageItemText, { key: _.uniqueId(), content: item.content });
+          break;
+        case 'CAPTION':
+          return React.createElement(PageItemCaption, { key: _.uniqueId(), content: item.content });
+          break;
+        case 'IMAGE':
+          return React.createElement(PageItemImage, { key: _.uniqueId(), src: item.path });
+          break;
+        case 'P5':
+          return React.createElement(PageItemP5, { key: _.uniqueId(), content: item.content });
+          break;
+        case 'VIDEO':
+          return React.createElement(PageItemVideo, { key: _.uniqueId(), src: item.path });
+          break;
+      }
+      return null;
     }, this // bind
     );
     return items;
@@ -44761,7 +44808,7 @@ var Collection = React.createClass({
 
 module.exports = Collection;
 
-},{"./PageItemText.react":169,"react":163}],167:[function(require,module,exports){
+},{"./PageItemCaption.react":169,"./PageItemImage.react":170,"./PageItemP5.react":171,"./PageItemText.react":172,"./PageItemVideo.react":173,"lodash":5,"react":163}],167:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -44904,40 +44951,207 @@ var Navigation = React.createClass({
 module.exports = Navigation;
 
 },{"classnames":3,"react":163}],169:[function(require,module,exports){
-"use strict";
+'use strict';
 
+var _ = require('lodash');
 var React = require('react');
 
-var PageItemText = React.createClass({
-  displayName: "PageItemText",
+var PageItemCaption = React.createClass({
+  displayName: 'PageItemCaption',
 
   getDefaultProps: function getDefaultProps() {
     return {
-      content: "text"
+      content: ""
+    };
+  },
+
+  createParagraphs: function createParagraphs() {
+    var lines = this.props.content.split('\n');
+    lines = _.without(lines, ''); // empty lines
+    var paragraphs = lines.map(function (line, index) {
+      return React.createElement(
+        'p',
+        { key: _.uniqueId() },
+        line
+      );
+    }, this // bind
+    );
+    return paragraphs;
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: 'col-sm-3 caption' },
+      this.createParagraphs()
+    );
+  }
+});
+
+module.exports = PageItemCaption;
+
+},{"lodash":5,"react":163}],170:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var PageItemImage = React.createClass({
+  displayName: 'PageItemImage',
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      src: ""
     };
   },
 
   render: function render() {
     return React.createElement(
-      "div",
-      { className: "col-sm-6 middle-col col-sm-offset-3" },
-      React.createElement(
-        "p",
-        null,
-        "Latin placeholder: nulla vitae elit libero, a pharetra augue. Nullam quis risus eget urna mollis ornare vel eu leo. Cras mattis consectetur purus sit amet fermentum. Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod"
-      ),
-      React.createElement(
-        "p",
-        null,
-        "Latin placeholder: nulla vitae elit libero, a pharetra augue. Nullam quis risus eget urna mollis ornare vel eu leo. Cras mattis consectetur purus sit amet fermentum. Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Etiam porta sem malesuada magna mollis euismod"
-      )
+      'div',
+      { className: 'col-sm-6 middle-col col-sm-offset-3' },
+      React.createElement('img', { className: 'img-responsive', src: this.props.src, height: 'auto', width: 'auto' })
+    );
+  }
+});
+
+module.exports = PageItemImage;
+
+},{"react":163}],171:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+
+var React = require('react');
+
+var style = {
+  width: '100%',
+  marginBottom: '25px',
+  backgroundColor: 'white'
+};
+
+var PageItemP5 = React.createClass({
+  displayName: 'PageItemP5',
+
+  getInitialState: function getInitialState() {
+    this._iframeId = _.uniqueId('iframe_p5_');
+    return null;
+  },
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      content: ""
+    };
+  },
+
+  componentWillMount: function componentWillMount() {
+    var re = /createCanvas\((.*),(.*)\)/g;
+    var tokkens = this.props.content.split(re);
+    this._iframeWidth = Number(tokkens[1]);
+    this._iframeHeight = Number(tokkens[2]);
+  },
+
+  iframeDidLoad: function iframeDidLoad() {
+    // frame is loaded, now add code of p5 sketch
+    // https://github.com/processing/p5.js-website/blob/master/js/examples.js#L133
+    var iframe = $('#' + this._iframeId)[0];
+    var userScript = iframe.contentWindow.document.createElement('script');
+    userScript.type = 'text/javascript';
+    userScript.text = "new p5();\n" + this.props.content;
+    userScript.async = false;
+    iframe.contentWindow.document.body.appendChild(userScript);
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: 'col-sm-6 middle-col col-sm-offset-3' },
+      React.createElement('iframe', {
+        id: this._iframeId,
+        className: 'p5-iframe',
+        onLoad: this.iframeDidLoad,
+        height: this._iframeHeight,
+        style: style,
+        seamless: 'seamless',
+        frameBorder: '0',
+        scrolling: 'no',
+        src: './lib/p5/p5-iframe-template.html' })
+    );
+  }
+});
+
+module.exports = PageItemP5;
+
+},{"lodash":5,"react":163}],172:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var React = require('react');
+
+var PageItemText = React.createClass({
+  displayName: 'PageItemText',
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      content: ""
+    };
+  },
+
+  createParagraphs: function createParagraphs() {
+    var lines = this.props.content.split('\n');
+    lines = _.without(lines, ''); // empty lines
+    var paragraphs = lines.map(function (line, index) {
+      return React.createElement(
+        'p',
+        { key: _.uniqueId() },
+        line
+      );
+    }, this // bind
+    );
+    return paragraphs;
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: 'col-sm-6 middle-col col-sm-offset-3' },
+      this.createParagraphs()
     );
   }
 });
 
 module.exports = PageItemText;
 
-},{"react":163}],170:[function(require,module,exports){
+},{"lodash":5,"react":163}],173:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var React = require('react');
+
+var PageItemVideo = React.createClass({
+  displayName: 'PageItemVideo',
+
+  getDefaultProps: function getDefaultProps() {
+    return {
+      src: ""
+    };
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      { className: 'col-sm-6 middle-col col-sm-offset-3' },
+      React.createElement(
+        'video',
+        { width: '100%', controls: true },
+        React.createElement('source', { src: this.props.src, type: 'video/mp4' }),
+        'Your browser does not support HTML5 video.'
+      )
+    );
+  }
+});
+
+module.exports = PageItemVideo;
+
+},{"lodash":5,"react":163}],174:[function(require,module,exports){
 "use strict";
 
 function endsWith(str, suffix) {
@@ -44948,7 +45162,13 @@ function startsWith(str, prefix) {
   return str.indexOf(prefix) === 0;
 }
 
+var regexExtension = /(?:\.([^.]+))?$/;
+function extension(str) {
+  return regexExtension.exec(str)[1];
+}
+
 module.exports.endsWith = endsWith;
 module.exports.startsWith = startsWith;
+module.exports.extension = extension;
 
 },{}]},{},[164]);

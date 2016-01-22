@@ -1,7 +1,7 @@
 {
 	"course": "Programmiertes Entwerfen I",
 	"semester": "Wintersemester 2015/16",
-	"student": "Maxi Musterman",
+	"student": "M. Musterman, M. Musterfrau & Peter Pan",
 	"teacher": "Prof. Benedikt Groß",
 	"school": "HS Ravensburg-Weingarten",
 	"pages": {
@@ -25,10 +25,13 @@
 		],
 		"4": [
 			"title.txt",
-			"text.txt"
+			"text.txt",
+			"1.mp4",
+			"1.txt"
 		],
 		"5": [
 			"title.txt",
+			"text.txt",
 			"1.js",
 			"1.txt",
 			"2.js",
