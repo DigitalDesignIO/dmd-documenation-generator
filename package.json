@@ -16,10 +16,13 @@
     "classnames": "^2.2.3",
     "gulp": "^3.9.0",
     "gulp-connect": "^2.3.1",
+    "gulp-uglify": "^1.5.1",
     "gulp-watch": "^4.3.5",
     "jquery": "^2.2.0",
     "lodash": "^4.0.0",
     "react": "^0.14.0-beta3",
+    "react-sticky": "^3.0.0",
+    "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }
 }

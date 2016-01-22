@@ -2,6 +2,13 @@
 
 var React = require('react');
 var cx = require('classnames');
+var Sticky = require('react-sticky');
+
+
+var stickyStyle = {
+  position: 'fixed',
+  top: '5px'
+};
 
 var Navigation = React.createClass({
   getDefaultProps: function () {
@@ -13,8 +20,9 @@ var Navigation = React.createClass({
   },
 
   handleClick: function(page) {
-    console.log(page);
     this.props.setCurrentPage(page);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   },
 
   createMenuItems: function() {
@@ -28,7 +36,7 @@ var Navigation = React.createClass({
           'chapter-start': isChapter
         });
         return (
-          <div key={page.pageName} className={pageClasses} onClick={this.handleClick.bind(this, page)}>{page.content}</div>
+          <div key={page.pageName} className={pageClasses} onClick={this.handleClick.bind(this, page)}>{page.content.trim()}</div>
         );
       }, 
       this // bind
@@ -40,9 +48,11 @@ var Navigation = React.createClass({
     return (
       <div className="row">
         <div id="left-col" className="col-xs-12 col-sm-2 col-lg-3 left-col">
-          <div className="content-block">
-            {this.createMenuItems()}
-          </div>
+          <Sticky stickyStyle={stickyStyle}>
+            <div className="content-block">
+              {this.createMenuItems()}
+            </div>
+          </Sticky>
         </div>
       </div>
     );

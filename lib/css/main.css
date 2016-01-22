@@ -133,6 +133,7 @@ a:hover {
 }
 
 .left-col .content-block div {
+  width: 100%;
   cursor: pointer;
 }
 
@@ -152,6 +153,10 @@ a:hover {
 .middle-col img {
   margin-bottom: 25px;
   background-color: white;
+}
+
+.middle-col video {
+  margin-bottom: 25px;
 }
 
 .caption {

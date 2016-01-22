@@ -61,7 +61,7 @@ var Application = React.createClass({
   },
 
   loadStructure: function(done) {
-    $.get('./structure.json')
+    $.get('./content/structure.json')
     .done(function(data) {
       done(null, data);
     })
