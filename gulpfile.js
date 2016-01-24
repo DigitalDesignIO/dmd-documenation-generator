@@ -19,10 +19,19 @@ gulp.task('build', function() {
     .pipe(connect.reload());
 });
 
+gulp.task('build-dev', function() {
+  return browserify('./src/app.js')
+    .transform(babelify)
+    .bundle()
+    .pipe(source('bundle.js'))
+    .pipe(gulp.dest('./lib/'))
+    .pipe(connect.reload());
+});
+
 gulp.task('watch', function() {
-  gulp.start('build');
+  gulp.start('build-dev');
   watch('./src/**/*.js', function() {
-    gulp.start('build');
+    gulp.start('build-dev');
   });
 });
 
