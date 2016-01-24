@@ -21,8 +21,7 @@ var Navigation = React.createClass({
 
   handleClick: function(page) {
     this.props.setCurrentPage(page);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    $('html, body').animate({scrollTop: 0}, 750);
   },
 
   createMenuItems: function() {
