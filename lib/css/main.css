@@ -59,6 +59,10 @@ a:hover {
   color: #00cc22;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 /* HEADING */
 .heading {
   font-family: 'circular-book';
@@ -127,7 +131,6 @@ a:hover {
 .left-col .content-block {
   font-size: 15px;
   font-family: 'circular-book', sans-serif;
-  font-weight: bold;
   margin-bottom: 40px;
   color: #112;
 }
@@ -139,6 +142,11 @@ a:hover {
 
 .left-col .content-block .chapter-start:not(:first-child) {
   margin-top: 20px;
+}
+
+.left-col .content-block .chapter-start {
+  margin-bottom: 0px;
+  
 }
 
 /* LEFT MIDDLE */
