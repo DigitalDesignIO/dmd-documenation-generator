@@ -41,10 +41,13 @@ Supported media
 ---------------
 * TITLE (page titles): `title.txt`
 	If the title inside the file is prefixed with a TAB or SPACE charater, then the title will be rendered in the navigation as a seconday page
-* TEXT (page main text): `text.txt`
-	Linebreaks are supported and rendered as paragraphs
+* TEXT (page main text): `text.txt`, main text of a sub page
+basic [markdown](https://en.wikipedia.org/wiki/Markdown#Example) 
 * IMAGE (image files): `.jpg`, `.jpeg`, `.gif`, `.png`, `.svg`
-* CAPTION (image/p5 captions): `1.txt` to refer to first image of the page
+* CAPTION (image/p5 captions): `1.txt` to refer a caption text e.g. to the first image of the page
 * P5 ([p5.js](http://p5js.org/) sketch files): `.js`
 * VIDEO (video files): `.mp4`
+
+TEXT and CAPTION, support basic [markdown](https://en.wikipedia.org/wiki/Markdown#Example) syntax, to add e.g. hyperlink, bold text, italic text ... to your text
+
 

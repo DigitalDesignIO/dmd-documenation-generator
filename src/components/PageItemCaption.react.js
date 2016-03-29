@@ -1,7 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
 var React = require('react');
+
+var markdownToHtml = require('../utils/react').markdownToHtml;
 
 
 var PageItemCaption = React.createClass({
@@ -12,15 +13,7 @@ var PageItemCaption = React.createClass({
   },
 
   createParagraphs: function() {
-    var lines = this.props.content.split('\n');
-    lines = _.without(lines, ''); // empty lines
-    var paragraphs = lines.map(
-      function(line, index) {
-        return (<p key={_.uniqueId()}>{line}</p>);
-      }, 
-      this // bind
-    );
-    return paragraphs;
+    return markdownToHtml(this.props.content);
   },
 
   render: function () {
@@ -29,7 +22,7 @@ var PageItemCaption = React.createClass({
         {this.createParagraphs()}
       </div>
     );
-  } 
+  }
 });
 
 module.exports = PageItemCaption;
