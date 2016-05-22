@@ -7,8 +7,7 @@ var React = require('react');
 
 var style = {
   width: '100%',
-  marginBottom: '25px',
-  backgroundColor: 'white'
+  marginBottom: '25px'
 };
 
 var PageItemP5 = React.createClass({
@@ -38,7 +37,7 @@ var PageItemP5 = React.createClass({
     userScript.type = 'text/javascript';
     userScript.text = "new p5();\n" + this.props.content;
     userScript.async = false;
-    iframe.contentWindow.document.body.appendChild(userScript);  
+    iframe.contentWindow.document.body.appendChild(userScript);
   },
 
   render: function () {
@@ -56,7 +55,7 @@ var PageItemP5 = React.createClass({
           src="./lib/p5/p5-iframe-template.html"/>
       </div>
     );
-  } 
+  }
 });
 
 module.exports = PageItemP5;

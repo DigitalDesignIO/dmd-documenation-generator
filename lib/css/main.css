@@ -24,7 +24,7 @@
 /* GLOBALS */
 body {
   font-family: 'circular-black', sans-serif;
-  
+
   background-color: #faf8fa;
 }
 
@@ -146,7 +146,7 @@ a:hover {
 
 .left-col .content-block .chapter-start {
   margin-bottom: 0px;
-  
+
 }
 
 /* LEFT MIDDLE */
@@ -156,6 +156,10 @@ a:hover {
   font-size: 20px;
   color: #112;
   margin: 0 0 25px;
+}
+
+.middle-col a {
+  color: #112;
 }
 
 .middle-col img {
