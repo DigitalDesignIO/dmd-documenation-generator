@@ -7,10 +7,22 @@ var React = require('react');
 var PageItemVimeo = React.createClass({
   getDefaultProps: function () {
     return {
-      vimeoId: ""
+      vimeoId: "",
+      width: 600,
+      height: 400
     };
   },
   
+  getLayoutWidth: function() {
+    return 600;
+  },
+  
+  calcHeight: function() {
+    var layoutHeight = (this.getLayoutWidth() * this.props.height) / this.props.width;
+    layoutHeight = Math.ceil(layoutHeight);
+    return layoutHeight;
+  },
+
   createUrl: function() {
     var vimeoSrc = 'https://player.vimeo.com/video/'+ this.props.vimeoId;
     return vimeoSrc;
@@ -19,7 +31,7 @@ var PageItemVimeo = React.createClass({
   render: function () {
     return (
       <div className="col-sm-6 middle-col col-sm-offset-3">
-        <iframe src={this.createUrl()} width="100%" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        <iframe src={this.createUrl()} width={this.getLayoutWidth()} height={this.calcHeight()} allowFullScreen></iframe>
       </div>
     );
   } 

@@ -39,7 +39,14 @@ var Collection = React.createClass({
             return (<PageItemVideo key={_.uniqueId()} src={item.path}/>);
             break;
           case 'VIMEO':
-            return (<PageItemVimeo key={_.uniqueId()} vimeoId={item.content}/>);
+            var vimeoObject = JSON.parse(item.content);
+            // console.log(vimeoObject);
+            return (<PageItemVimeo 
+              key={_.uniqueId()}
+              vimeoId={vimeoObject['id']}
+              width={vimeoObject['width']}
+              height={vimeoObject['height']}
+            />);
             break;
         }
         return null;
