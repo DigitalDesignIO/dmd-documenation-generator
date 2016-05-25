@@ -8,6 +8,7 @@ var PageItemCaption = require('./PageItemCaption.react');
 var PageItemImage = require('./PageItemImage.react');
 var PageItemP5 = require('./PageItemP5.react');
 var PageItemVideo = require('./PageItemVideo.react');
+var PageItemVimeo = require('./PageItemVimeo.react');
 
 
 var Collection = React.createClass({
@@ -36,6 +37,16 @@ var Collection = React.createClass({
             break;
           case 'VIDEO':
             return (<PageItemVideo key={_.uniqueId()} src={item.path}/>);
+            break;
+          case 'VIMEO':
+            var vimeoObject = JSON.parse(item.content);
+            // console.log(vimeoObject);
+            return (<PageItemVimeo 
+              key={_.uniqueId()}
+              vimeoId={vimeoObject['id']}
+              width={vimeoObject['width']}
+              height={vimeoObject['height']}
+            />);
             break;
         }
         return null;

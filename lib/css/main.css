@@ -46,6 +46,10 @@ a:hover {
   color: #00cc22;
 }
 
+iframe {
+  border: none;
+}
+
 @media(max-width: 767px) {
   .row {
     margin-left: 0;
