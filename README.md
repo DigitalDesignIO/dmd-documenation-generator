@@ -47,6 +47,19 @@ basic [markdown](https://en.wikipedia.org/wiki/Markdown#Example)
 * CAPTION (image/p5 captions): `1.txt` to refer a caption text e.g. to the first image of the page
 * P5 ([p5.js](http://p5js.org/) sketch files): `.js`
 * VIDEO (video files): `.mp4`
+* VIMEO (online videos): `.vimeo`, to embedd videos from vimeo add a `.vimeo` file with the following structure:  
+
+	```
+	{
+		"id": 157991947,
+		"width": 1920,
+		"height": 1080
+	}
+	```  
+	
+	Where "id" is the vimeo ID of your video. Just copy the ID out of the URL (Your vimeo URL of the video should look similar to this: [https://vimeo.com/157991947](https://vimeo.com/157991947)).
+	Width and height represent the resolution of your video.
+
 
 TEXT and CAPTION, support basic [markdown](https://en.wikipedia.org/wiki/Markdown#Example) syntax, to add e.g. hyperlink, bold text, italic text ... to your text
 
