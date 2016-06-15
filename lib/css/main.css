@@ -155,6 +155,23 @@ iframe {
 
 /* LEFT MIDDLE */
 
+.middle-col ul li, .middle-col ol li {
+  color: #112;
+  font-family: 'circular-book';
+  font-size: 20px;
+  line-height: 1; 
+}
+
+.middle-col blockquote {
+  border-width: 0 0 0 7px;
+  border-style: solid;
+  padding: 0 0 0 15px;
+  line-height: 2;
+  background-color: lightgrey;
+  color: #00cc22;
+  margin: 0 0 0 25px;
+}
+
 .middle-col p {
   font-family: 'circular-book';
   font-size: 20px;
@@ -164,6 +181,14 @@ iframe {
 
 .middle-col a {
   color: #112;
+}
+
+.middle-col strong, .middle-col .bold {
+  color: #112;
+  font-family: 'circular-book', sans-serif;
+  font-size: 20px;
+  font-weight: bolder;
+  display: inline;
 }
 
 .middle-col img {
