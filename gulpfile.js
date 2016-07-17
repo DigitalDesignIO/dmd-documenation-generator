@@ -10,25 +10,25 @@ var gm = require('gulp-gm');
 var imagemin = require('gulp-imagemin');
 var runSequence = require('run-sequence')
 
-gulp.task('imagemin', () =>
+gulp.task('imagemin', function() {
   gulp.src(['content/**/*.jpg', 'content/**/*.png'])
     .pipe(imagemin())
     .pipe(gulp.dest('content'))
-);
+});
 
 // requires graphicsmagick http://www.graphicsmagick.org/download.html
 // brew install graphicsmagick
-gulp.task('imageResize', () =>
+gulp.task('imageResize', function() {
   gulp.src(['content/**/*.jpg', 'content/**/*.png'])
     .pipe(gm(function (gmfile) {
       return gmfile.resize(600);
     }))
     .pipe(gulp.dest('content'))
-);
+});
 
-gulp.task('resize', () =>
+gulp.task('resize', function() {
   runSequence(['imageResize'], 'imagemin')
-);
+});
 
 gulp.task('build', function() {
   return browserify('./src/app.js')
