@@ -62,7 +62,7 @@ var Application = React.createClass({
   },
 
   loadStructure: function(done) {
-    $.get('./content/structure.json')
+    $.get('./content/structure.json?nocache='+ new Date().getTime())
     .done(function(data) {
       done(null, data);
     })
@@ -92,7 +92,7 @@ var Application = React.createClass({
     });
     // load content of all pageItems
     var reqests = _.map(allPageItems, function(pageItem){
-      var path = './content/' + pageItem.pageName +'/'+ pageItem.fileName;
+      var path = './content/' + pageItem.pageName +'/'+ pageItem.fileName + '?nocache='+ new Date().getTime();
       var shouldLoadContent = (pageItem.type !== 'IMAGE' || pageItem.type !== 'VIDEO' ||pageItem.type !== 'VIMEO');
       pageItem.path = path;
       return function(cb){
@@ -129,7 +129,7 @@ var Application = React.createClass({
     return null;
   },
 
-  setCurrentPage: function(page) {    
+  setCurrentPage: function(page) {
     this.setState({
       currentPage: page,
       currentPageContent: _.filter(this.state.content, _.matches({pageName: page.pageName}))
@@ -144,7 +144,7 @@ var Application = React.createClass({
   render: function () {
     return (
       <div>
-        <Header 
+        <Header
           school={this.state.structure.school}
           semester={this.state.structure.semester}
           teacher={this.state.structure.teacher}
